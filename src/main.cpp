@@ -7,7 +7,7 @@ int main(int argc, char * argv[])
 	int x;
 	int oscal[READ_DATA_LENGTH];
 	printf("Vitejte v programu pro cteni OSCAL z PIC16F630 s pouzitim naseho genialniho PROGRAMATORU Vasek1.\n");
-	hComm = CreateFile((LPCWSTR)"COM3",GENERIC_WRITE,0,0,OPEN_EXISTING, FILE_FLAG_OVERLAPPED,0);
+	hComm = CreateFile((LPCWSTR)"COM4",GENERIC_WRITE,0,0,OPEN_EXISTING, FILE_FLAG_OVERLAPPED,0);
 	setZeros(hComm);
 
 	programVerifyMode(hComm);
