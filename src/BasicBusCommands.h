@@ -12,7 +12,7 @@
 void setZeros(HANDLE hComm);
 
 
-void setData(HANDLE hComm, int data[]);
+void setData(HANDLE hComm, int data[], int size);
 
 void setDataChunk(HANDLE hComm, int data);
 

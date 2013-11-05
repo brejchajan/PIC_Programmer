@@ -1,4 +1,5 @@
 #include "basicBusCommands.h"
+#include <stdio.h>
 
 void setDataWrite0(HANDLE hComm)
 {
@@ -12,6 +13,7 @@ void setDataWrite1(HANDLE hComm)
 
 int dataRead(HANDLE hComm)
 {
+    int x;
 	DWORD CMS;
 	GetCommModemStatus(hComm, &CMS);
 	if(CMS & MS_CTS_ON)
@@ -42,9 +44,11 @@ void setZeros(HANDLE hComm)
 
 
 
-void setData(HANDLE hComm, int data[])
+void setData(HANDLE hComm, int data[],int size)
 {
-	for (int i = 0; i < (sizeof(data) / sizeof(int)); ++i)
+    int x;
+
+	for (int i = 0; i < size; ++i)
 	{
 		setDataChunk(hComm, data[i]);
 	}
@@ -52,12 +56,16 @@ void setData(HANDLE hComm, int data[])
 
 void setDataChunk(HANDLE hComm, int data)
 {
-	setClock0(hComm);
+	int x;
+    setClock0(hComm);
 	Sleep(1);
 	if (data == 0)
-		setDataWrite0(hComm);
+		{setDataWrite0(hComm);}
 	else
-		setDataWrite1(hComm);
+        {
+        setDataWrite1(hComm);
+        }
+
 	Sleep(1);
 	setClock1(hComm);
 	Sleep(1);
@@ -66,7 +74,8 @@ void setDataChunk(HANDLE hComm, int data)
 }
 
 int readDataChunk(HANDLE hComm)
-{
+{   int x;
+
 	int res = 0;
 	setClock0(hComm);
 	Sleep(1);
@@ -79,6 +88,7 @@ int readDataChunk(HANDLE hComm)
 
 void readData(HANDLE hComm, int *buffer, int size)
 {
+    int x;
 	for (int i = 0; i < size; i++)
 	{
 		buffer[i] = readDataChunk(hComm);
