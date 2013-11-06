@@ -9,17 +9,16 @@ void incrementAddress(HANDLE hComm, int offset)
 	for (int i = 0; i < offset; i++)
 	{	
 		setData(hComm, incCommand, velikost_pole);
-		Sleep(1);
+		//Sleep(1);
 	}
 }
 
 void readDataFromProgramMemory(HANDLE hComm, int *buffer, int size)
 {
-    int x; 
 	int readDataCommand[] = {0, 0, 1, 0, 0, 0};
 	int velikost_pole;
     velikost_pole=(sizeof(readDataCommand) / sizeof(int));
-	setData(hComm, readDataCommand,velikost_pole);
+	setData(hComm, readDataCommand, velikost_pole);
 	Sleep(1);
 	setClock1(hComm);
 	Sleep(1);
