@@ -19,18 +19,18 @@ void readDataFromProgramMemory(HANDLE hComm, int *buffer, int size)
 	int velikost_pole;
     velikost_pole=(sizeof(readDataCommand) / sizeof(int));
 	setData(hComm, readDataCommand, velikost_pole);
-	Sleep(1);
+	//Sleep(1);
 	setClock1(hComm);
-	Sleep(1);
+	//Sleep(1);
 	setClock0(hComm);
-	Sleep(1);
+	//Sleep(1);
 	//printf("cteni dat\n");
 	//scanf("%i",&x);
 	readData(hComm, buffer, size);
 	setClock1(hComm);
-	Sleep(1);
+	//Sleep(1);
 	setClock0(hComm);
-	Sleep(1);
+	//Sleep(1);
 }
 
 void programVerifyMode(HANDLE hComm)
