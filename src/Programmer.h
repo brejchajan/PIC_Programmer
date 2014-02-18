@@ -31,7 +31,7 @@ void loadDataToProgramMemory(HANDLE hComm,int *command);
 void beginProgramingInternal(HANDLE hComm);
 /**
 	Enters Program/Verify mode
-	Waits for at least 20 seconds to do the synchronization with
+	Waits for at least 2 seconds to do the synchronization with
 	programmer properly.
 	@param [in] hComm	handle to the COM port.
 */

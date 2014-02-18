@@ -40,7 +40,7 @@ void loadDataToProgramMemory(HANDLE hComm,int *command)
 	int velikost_prikazu;
     velikost_prikazu=(sizeof(loadDataCommand) / sizeof(int));
     int size_of_load=velikost_prikazu+COMMAND_LENGTH+2;
-    int loadCommand[size_of_load];
+    int * loadCommand = (int *)calloc(size_of_load, sizeof(int));
    
    int j=0; 
    for (int i = (size_of_load-2); i > (velikost_prikazu-2) ; i--)
@@ -85,6 +85,6 @@ void beginProgramingInternal(HANDLE hComm)
 void programVerifyMode(HANDLE hComm)
 {
 	EscapeCommFunction(hComm, SETDTR);
-	//Sleep for 20 seconds
+	//Sleep for 2 seconds
 	Sleep(2000);
 }
