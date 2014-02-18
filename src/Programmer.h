@@ -6,6 +6,7 @@
 #include <windows.h>
 
 #define READ_DATA_LENGTH 14
+#define COMMAND_LENGTH 14
 /**
 	I/O SETUP
 
@@ -25,6 +26,9 @@ void incrementAddress(HANDLE hComm, int offset);
 
 void readDataFromProgramMemory(HANDLE hComm, int *buffer, int size);
 
+void loadDataToProgramMemory(HANDLE hComm,int *command);
+
+void beginProgramingInternal(HANDLE hComm);
 /**
 	Enters Program/Verify mode
 	Waits for at least 20 seconds to do the synchronization with

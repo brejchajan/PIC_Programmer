@@ -33,9 +33,58 @@ void readDataFromProgramMemory(HANDLE hComm, int *buffer, int size)
 	//Sleep(1);
 }
 
+
+void loadDataToProgramMemory(HANDLE hComm,int *command)
+{
+	int loadDataCommand[] = {0, 1, 0, 0, 0, 0};
+	int velikost_prikazu;
+    velikost_prikazu=(sizeof(loadDataCommand) / sizeof(int));
+    int size_of_load=velikost_prikazu+COMMAND_LENGTH+2;
+    int loadCommand[size_of_load];
+   
+   int j=0; 
+   for (int i = (size_of_load-2); i > (velikost_prikazu-2) ; i--)
+   {
+        	loadCommand[i]=command[j];
+        	j=j+1;
+            
+            //printf("%d", command[i]);
+    } 
+   for (int i = 0; i <velikost_prikazu ; i++)
+	{
+        loadCommand[i]=loadDataCommand[i];	
+    }
+    
+    //start+stop bit
+    loadCommand[velikost_prikazu]=0;
+    loadCommand[size_of_load-1]=0;
+    
+//    for (int i = 0; i <size_of_load ; i++)
+//	{
+//        	printf("%d", loadCommand[i]);
+//    }
+    setData(hComm, loadCommand, size_of_load);
+}
+
+
+void beginProgramingInternal(HANDLE hComm)
+{
+	int beginProgramingCommand[6] = {0, 0, 0, 1, 0, 0};
+	int velikost_pole;
+    velikost_pole=(sizeof(beginProgramingCommand) / sizeof(int));
+	
+    setData(hComm, beginProgramingCommand, velikost_pole);
+	Sleep(2);
+
+}
+
+
+
+
+
 void programVerifyMode(HANDLE hComm)
 {
 	EscapeCommFunction(hComm, SETDTR);
 	//Sleep for 20 seconds
-	Sleep(20000);
+	Sleep(2000);
 }
