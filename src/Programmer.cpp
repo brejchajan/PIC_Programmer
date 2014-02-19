@@ -20,20 +20,22 @@ void readDataFromProgramMemory(HANDLE hComm, int *buffer, int size)
 	int velikost_pole;
     velikost_pole=(sizeof(readDataCommand) / sizeof(int));
 	setData(hComm, readDataCommand, velikost_pole);
-	Sleep(3);
-	//setClock1(hComm);
+	Sleep(1); //oddelemi mezi prikazem a prijmem dat
+	
+	setClock1(hComm);
 	//Sleep(1);
-	//setClock0(hComm);
+	setClock0(hComm);
 	
     //Sleep(1);
 	//printf("cteni dat\n");
 	//scanf("%i",&x);
 	readData(hComm, buffer, size);
 	
-    //setClock1(hComm);
+    setClock1(hComm);
 	//Sleep(1);
-	//setClock0(hComm);
-	Sleep(1);
+	setClock0(hComm);
+	
+    //Sleep(1);
 }
 
 

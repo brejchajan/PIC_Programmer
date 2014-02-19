@@ -3,7 +3,7 @@
 
 void printData(int * data)
 {
-	for (int i = 0; i < READ_DATA_LENGTH2; i++)
+	for (int i = 0; i < READ_DATA_LENGTH; i++)
 	{
         printf("%d", data[i]);
     }
@@ -18,7 +18,7 @@ int main(int argc, char * argv[])
 	HANDLE hComm;    
 	DWORD CMS;
 	int oscal[READ_DATA_LENGTH];
-	int configWord[READ_DATA_LENGTH2];
+	int configWord[READ_DATA_LENGTH];
 	
 	int command[]={1,0,0,1,1,1,1,1,1,1,1,1,1,1};
 	
@@ -46,8 +46,8 @@ int main(int argc, char * argv[])
     	//read CONFIG WORD
     	
         incrementAddress(hComm, 1);
-        Sleep(1);
-    	readDataFromProgramMemory(hComm, configWord, READ_DATA_LENGTH2);
+        //Sleep(1);
+    	readDataFromProgramMemory(hComm, configWord, READ_DATA_LENGTH);
     	printData(configWord);
     }
 //    loadDataToProgramMemory(hComm, command);
