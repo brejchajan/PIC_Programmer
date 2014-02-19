@@ -3,7 +3,7 @@
 
 void printData(int * data)
 {
-	for (int i = 0; i < READ_DATA_LENGTH; i++)
+	for (int i = 0; i < READ_DATA_LENGTH2; i++)
 	{
         printf("%d", data[i]);
     }
@@ -13,11 +13,12 @@ void printData(int * data)
 
 int main(int argc, char * argv[])
 {
+    int i;
 	int x;
 	HANDLE hComm;    
 	DWORD CMS;
 	int oscal[READ_DATA_LENGTH];
-	int configWord[READ_DATA_LENGTH];
+	int configWord[READ_DATA_LENGTH2];
 	
 	int command[]={1,0,0,1,1,1,1,1,1,1,1,1,1,1};
 	
@@ -33,27 +34,27 @@ int main(int argc, char * argv[])
 	programVerifyMode(hComm);
 	printf("Now entered Program/Verify mode...\n");
 	//read OSCAL
-	incrementAddress(hComm, 1023);
-	readDataFromProgramMemory(hComm, oscal, READ_DATA_LENGTH);
-	   
-	//read CONFIG WORD
-	incrementAddress(hComm, 7176);
-	readDataFromProgramMemory(hComm, configWord, READ_DATA_LENGTH);
+	
+    //incrementAddress(hComm, 1023);
+	//readDataFromProgramMemory(hComm, oscal, READ_DATA_LENGTH);
     
+    //printf("Prectena hodnota OSCAL: ");
+    //printData(oscal);
+    
+    for (i = 0; i < 1023; i++)
+    {
+    	//read CONFIG WORD
+    	
+        incrementAddress(hComm, 1);
+        Sleep(1);
+    	readDataFromProgramMemory(hComm, configWord, READ_DATA_LENGTH2);
+    	printData(configWord);
+    }
 //    loadDataToProgramMemory(hComm, command);
 //    beginProgramingInternal(hComm);
 
     setZeros(hComm);
 	CloseHandle(hComm);
-
-    
-    
-    //printf("\n");
-    printf("Prectena hodnota OSCAL: ");
-    printData(oscal);
-
-	printf("Prectena hodnota CONFIG WORD: ");
-    printData(configWord);
 	
 	printf("\n");
 	printf("Pro ukonceni programu napiste cislo a stiskene ENTER...\n");

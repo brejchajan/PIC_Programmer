@@ -13,7 +13,7 @@ void setDataWrite1(HANDLE hComm)
 
 int dataRead(HANDLE hComm)
 {
-	DWORD CMS;
+    static DWORD CMS;
 	GetCommModemStatus(hComm, &CMS);
 	if(CMS & MS_CTS_ON)
 		return 1;
@@ -38,14 +38,15 @@ void setZeros(HANDLE hComm)
 	EscapeCommFunction(hComm,CLRDTR);
 	EscapeCommFunction(hComm,CLRRTS);
 	EscapeCommFunction(hComm,CLRBREAK);
-	Sleep(1);
+	Sleep(4000);
 }
 
 
 
 void setData(HANDLE hComm, int data[], int size)
 {
-	for (int i = 0; i < size; ++i)
+	int i;
+    for (i = 0; i < size; ++i)
 	{
 		setDataChunk(hComm, data[i]);
 	}
@@ -72,19 +73,23 @@ void setDataChunk(HANDLE hComm, int data)
 
 int readDataChunk(HANDLE hComm)
 {
-	int res = 0;
+    int i;
+    int res= 0;
 	setClock0(hComm);
-	//Sleep(1);
+	Sleep(1);
 	setClock1(hComm);
-	res = dataRead(hComm);
-	//Sleep(1);
+	//for (i=1 ; i<25 ; i++){}
+	Sleep(3);
+    res = dataRead(hComm);
+	Sleep(1);
 	setClock0(hComm);
 	return res;
 }
 
 void readData(HANDLE hComm, int *buffer, int size)
 {
-	for (int i = 0; i < size; i++)
+	int i;
+    for (i = 0; i < size; i++)
 	{
 		buffer[i] = readDataChunk(hComm);
 	}

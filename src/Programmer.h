@@ -6,7 +6,10 @@
 #include <windows.h>
 
 #define READ_DATA_LENGTH 14
+#define READ_DATA_LENGTH2 16
 #define COMMAND_LENGTH 14
+
+
 /**
 	I/O SETUP
 

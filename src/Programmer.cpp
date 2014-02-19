@@ -5,8 +5,9 @@ void incrementAddress(HANDLE hComm, int offset)
 {
 	int incCommand[6] = {0, 1, 1, 0, 0, 0};
 	int velikost_pole;
+	int i;
     velikost_pole=(sizeof(incCommand) / sizeof(int));
-	for (int i = 0; i < offset; i++)
+	for (i = 0; i < offset; i++)
 	{	
 		setData(hComm, incCommand, velikost_pole);
 		//Sleep(1);
@@ -19,18 +20,20 @@ void readDataFromProgramMemory(HANDLE hComm, int *buffer, int size)
 	int velikost_pole;
     velikost_pole=(sizeof(readDataCommand) / sizeof(int));
 	setData(hComm, readDataCommand, velikost_pole);
+	Sleep(3);
+	//setClock1(hComm);
 	//Sleep(1);
-	setClock1(hComm);
-	//Sleep(1);
-	setClock0(hComm);
-	//Sleep(1);
+	//setClock0(hComm);
+	
+    //Sleep(1);
 	//printf("cteni dat\n");
 	//scanf("%i",&x);
 	readData(hComm, buffer, size);
-	setClock1(hComm);
+	
+    //setClock1(hComm);
 	//Sleep(1);
-	setClock0(hComm);
-	//Sleep(1);
+	//setClock0(hComm);
+	Sleep(1);
 }
 
 
@@ -41,16 +44,16 @@ void loadDataToProgramMemory(HANDLE hComm,int *command)
     velikost_prikazu=(sizeof(loadDataCommand) / sizeof(int));
     int size_of_load=velikost_prikazu+COMMAND_LENGTH+2;
     int * loadCommand = (int *)calloc(size_of_load, sizeof(int));
-   
-   int j=0; 
-   for (int i = (size_of_load-2); i > (velikost_prikazu-2) ; i--)
+    int j=0; 
+    int i;
+   for (i = (size_of_load-2); i > (velikost_prikazu-2) ; i--)
    {
         	loadCommand[i]=command[j];
         	j=j+1;
             
             //printf("%d", command[i]);
     } 
-   for (int i = 0; i <velikost_prikazu ; i++)
+   for (i = 0; i <velikost_prikazu ; i++)
 	{
         loadCommand[i]=loadDataCommand[i];	
     }
