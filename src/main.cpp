@@ -20,7 +20,8 @@ int main(int argc, char * argv[])
 	int oscal[READ_DATA_LENGTH];
 	int configWord[READ_DATA_LENGTH];
 	
-	int command[]={1,0,0,1,1,1,1,1,1,1,1,1,1,1};
+	int command[]={1,0,0,1,1,1,1,1,1,1,1,1,1,1}; //prikaz, ktery bude zapsan do pameti
+	int config[]={1,1,1,1,1,1,1,1,1,1,1,1,1,1}; //konfiguracni slovo pri loadConfigurationData ?? nema vyznam
 	
 	int delka;
 	delka=5;
@@ -36,20 +37,23 @@ int main(int argc, char * argv[])
 	//read OSCAL
 	
     //incrementAddress(hComm, 1023);
-	//readDataFromProgramMemory(hComm, oscal, READ_DATA_LENGTH);
+	
+    //readDataFromProgramMemory(hComm, oscal, READ_DATA_LENGTH);
     
     //printf("Prectena hodnota OSCAL: ");
     //printData(oscal);
     
-    for (i = 0; i < 1023; i++)
-    {
+
     	//read CONFIG WORD
     	
-        incrementAddress(hComm, 1);
-        //Sleep(1);
+        loadConfigurationData(hComm, config);
+     	incrementAddress(hComm, 7);
     	readDataFromProgramMemory(hComm, configWord, READ_DATA_LENGTH);
-    	printData(configWord);
-    }
+
+    	
+        printf("Prectena hodnota CONFIGWORD: ");
+        printData(configWord);
+
 //    loadDataToProgramMemory(hComm, command);
 //    beginProgramingInternal(hComm);
 

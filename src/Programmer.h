@@ -6,7 +6,6 @@
 #include <windows.h>
 
 #define READ_DATA_LENGTH 14
-#define READ_DATA_LENGTH2 16
 #define COMMAND_LENGTH 14
 
 
@@ -32,6 +31,9 @@ void readDataFromProgramMemory(HANDLE hComm, int *buffer, int size);
 void loadDataToProgramMemory(HANDLE hComm,int *command);
 
 void beginProgramingInternal(HANDLE hComm);
+
+void loadConfigurationData(HANDLE hComm,int *command);
+
 /**
 	Enters Program/Verify mode
 	Waits for at least 2 seconds to do the synchronization with

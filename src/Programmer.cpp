@@ -41,6 +41,7 @@ void readDataFromProgramMemory(HANDLE hComm, int *buffer, int size)
 
 void loadDataToProgramMemory(HANDLE hComm,int *command)
 {
+	//int loadDataCommand[] = {0, 0, 0, 0, 0, 0};
 	int loadDataCommand[] = {0, 1, 0, 0, 0, 0};
 	int velikost_prikazu;
     velikost_prikazu=(sizeof(loadDataCommand) / sizeof(int));
@@ -85,6 +86,38 @@ void beginProgramingInternal(HANDLE hComm)
 
 
 
+
+void loadConfigurationData(HANDLE hComm,int *command)
+{
+	int loadDataCommand[] = {0, 0, 0, 0, 0, 0};
+	int velikost_prikazu;
+    velikost_prikazu=(sizeof(loadDataCommand) / sizeof(int));
+    int size_of_load=velikost_prikazu+COMMAND_LENGTH+2;
+    int * loadCommand = (int *)calloc(size_of_load, sizeof(int));
+    int j=0; 
+    int i;
+   for (i = (size_of_load-2); i > (velikost_prikazu-2) ; i--)
+   {
+        	loadCommand[i]=command[j];
+        	j=j+1;
+            
+            //printf("%d", command[i]);
+    } 
+   for (i = 0; i <velikost_prikazu ; i++)
+	{
+        loadCommand[i]=loadDataCommand[i];	
+    }
+    
+    //start+stop bit
+    loadCommand[velikost_prikazu]=0;
+    loadCommand[size_of_load-1]=0;
+    
+//    for (int i = 0; i <size_of_load ; i++)
+//	{
+//        	printf("%d", loadCommand[i]);
+//    }
+    setData(hComm, loadCommand, size_of_load);
+}
 
 
 void programVerifyMode(HANDLE hComm)
