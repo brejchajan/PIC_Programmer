@@ -1,5 +1,6 @@
 #include "Programmer.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 void printData(int * data)
 {
@@ -19,14 +20,23 @@ int main(int argc, char * argv[])
 	DWORD CMS;
 	int oscal[READ_DATA_LENGTH];
 	int configWord[READ_DATA_LENGTH];
+	int write_data[READ_DATA_LENGTH]; //precteni zapsanych dat
 	
-	int command[]={1,0,0,1,1,1,1,1,1,1,1,1,1,1}; //prikaz, ktery bude zapsan do pameti
+	long command[]={1,0,0,1,1,1,1,1,1,1,1,1,1,1}; //prikaz, ktery bude zapsan do pameti
+	int command2[COMMAND_LENGTH];
 	int config[]={1,1,1,1,1,1,1,1,1,1,1,1,1,1}; //konfiguracni slovo pri loadConfigurationData ?? nema vyznam
 	
 	int delka;
 	delka=5;
 	int pole[5]={0,0,1,0,0};
 	pole[0]=7;
+	
+	
+	FILE *soubor;
+    char nacitani_souboru[1];
+    char cesta_souboru[50];
+    int detekce_chyby;  
+    char *chyba;
 	
 	printf("Vitejte v programu pro cteni OSCAL z PIC16F630 s pouzitim naseho genialniho PROGRAMATORU Vasek1.\n");
 	hComm = CreateFile("COM4",GENERIC_WRITE,0,0,OPEN_EXISTING, FILE_FLAG_OVERLAPPED,0);
@@ -47,12 +57,116 @@ int main(int argc, char * argv[])
     	//read CONFIG WORD
     	
         loadConfigurationData(hComm, config);
-     	incrementAddress(hComm, 7);
+     	incrementAddress(hComm, 8);
     	readDataFromProgramMemory(hComm, configWord, READ_DATA_LENGTH);
 
     	
         printf("Prectena hodnota CONFIGWORD: ");
         printData(configWord);
+
+        
+        //Opusteni konfiguracni pamenti a vraceni do pameti programu
+        printf("\nOpusteni konfiguracni pamenti a vraceni do pameti programu...\n");
+        setZeros(hComm);
+	    programVerifyMode(hComm);
+	    
+	    
+	    
+        incrementAddress(hComm, 17);
+// Nacitani prikazu ze souboru a zapis do programove pameti
+        detekce_chyby=0;
+        printf("\n\nZadejte cestu k souboru o delce 50 znaku a ve tvaru: C:\\vasek\\Eoe\\cecko\\soubor.txt\n");   //C:\vasek\Eoe\cecko\data.txt
+        scanf("%s",&cesta_souboru); 
+        
+        if ((soubor=fopen(cesta_souboru,"r"))==NULL)
+           {printf("Soubor se nepodarilo otevrit!\n");}
+        else
+        {
+             printf("Cisla souboru\n\n");
+              while (1==1)
+                 {  
+                     //detekce chyby v prevodu char na cislo
+                     detekce_chyby=0;
+                     for(i=0; i<COMMAND_LENGTH; i++)
+                     {
+                         nacitani_souboru[0] = fgetc(soubor);
+                         //ukonceni cyklu na konci programu
+                         if(nacitani_souboru[0]==EOF)
+                              {break;}
+                        //prevod textoveho cisla na int 
+                         command[i] = strtol(nacitani_souboru, &chyba, 10);
+                         if (*chyba == nacitani_souboru[0])
+                          {
+                            detekce_chyby=1;
+                            break;
+                           }
+                         else //kontrola na 0 a 1
+                        {
+                         if ((command[i]==0)||(command[i]==1))
+                          {}
+                         else 
+                          {
+                            detekce_chyby=2;
+                            printf("Instrukce programu ve spatnem formatu!\n\n");
+                            break;
+                           }
+                        }   
+                     }
+             
+                     //preskoceni textovych poznamek
+                     if(nacitani_souboru[0]!='\n')
+                           {
+                             do {
+                                  nacitani_souboru[0]= fgetc(soubor);
+                                  //ukonceni cyklu na konci programu
+                                  if(nacitani_souboru[0]==EOF)
+                                      {break;}
+                               } while (nacitani_souboru[0] != '\n');
+                           }
+                     //ukonceni cyklu na konci programu
+                     if(nacitani_souboru[0]==EOF)
+                           {break;}
+                     
+                    if((detekce_chyby!=1)&&(detekce_chyby!=2))
+                           {
+                              
+                                        //printf("%i",command[i]);
+                                        for (int i = 0; i < READ_DATA_LENGTH; i++)
+                                            {command2[i] = (int)command[i];}
+                                        
+                                        //zapis command do pameti                                            
+                                        loadDataToProgramMemory(hComm, command2);
+                                        beginProgramingInternal(hComm);
+                                        
+                                        //Kontrola zapisu dat
+                                        readDataFromProgramMemory(hComm, write_data, READ_DATA_LENGTH);
+                                        for (int i = 0; i < READ_DATA_LENGTH; i++)
+                                        	{
+                                                if(command[i]!=write_data[READ_DATA_LENGTH-i-1])
+                                                    {
+                                                        detekce_chyby=2;
+                                                        break;
+                                                    }
+                                                
+                                            }
+                                         
+                                        printData(write_data);       
+                                        incrementAddress(hComm, 1);
+                                   
+                           
+                           
+                              //printf("\n");
+                           }            
+    
+                     if(detekce_chyby==2)
+                         {
+                           printf("Nastala chyba zapisu dat do programove pameti!\n");
+                           break;
+                         } 
+                 }
+            fclose(soubor);
+          
+        }
 
 //    loadDataToProgramMemory(hComm, command);
 //    beginProgramingInternal(hComm);
