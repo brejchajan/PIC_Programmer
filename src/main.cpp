@@ -19,6 +19,7 @@ int main(int argc, char * argv[])
 	HANDLE hComm;    
 	DWORD CMS;
 	int oscal[READ_DATA_LENGTH];
+    int oscal_write[READ_DATA_LENGTH];
 	int configWord[READ_DATA_LENGTH];
 	int write_data[READ_DATA_LENGTH]; //precteni zapsanych dat
 	
@@ -37,6 +38,8 @@ int main(int argc, char * argv[])
     char cesta_souboru[50];
     int detekce_chyby;  
     char *chyba;
+    int cislo_instrukce;
+    int configuration[COMMAND_LENGTH]; //nastaveni konfigurace
 	
 	printf("Vitejte v programu pro cteni OSCAL z PIC16F630 s pouzitim naseho genialniho PROGRAMATORU Vasek1.\n");
 	hComm = CreateFile("COM4",GENERIC_WRITE,0,0,OPEN_EXISTING, FILE_FLAG_OVERLAPPED,0);
@@ -46,18 +49,18 @@ int main(int argc, char * argv[])
 	printf("Now entered Program/Verify mode...\n");
 	//read OSCAL
 	
-    //incrementAddress(hComm, 1023);
+    incrementAddress(hComm, 1023);
 	
-    //readDataFromProgramMemory(hComm, oscal, READ_DATA_LENGTH);
+    readDataFromProgramMemory(hComm, oscal, READ_DATA_LENGTH);
     
-    //printf("Prectena hodnota OSCAL: ");
-    //printData(oscal);
+    printf("Prectena hodnota OSCAL: ");
+    printData(oscal);
     
 
     	//read CONFIG WORD
     	
         loadConfigurationData(hComm, config);
-     	incrementAddress(hComm, 8);
+     	incrementAddress(hComm, 7);
     	readDataFromProgramMemory(hComm, configWord, READ_DATA_LENGTH);
 
     	
@@ -71,10 +74,16 @@ int main(int argc, char * argv[])
 	    programVerifyMode(hComm);
 	    
 	    
+	    //Vymazani programove pameti
+	    bulkEraseProgramMemory(hComm);
+	    printf("\nVymazani programove pamenti a vraceni do pameti programu...\n");
+	    setZeros(hComm);
+	    programVerifyMode(hComm);
 	    
-        incrementAddress(hComm, 17);
+       
 // Nacitani prikazu ze souboru a zapis do programove pameti
         detekce_chyby=0;
+        cislo_instrukce=0;
         printf("\n\nZadejte cestu k souboru o delce 50 znaku a ve tvaru: C:\\vasek\\Eoe\\cecko\\soubor.txt\n");   //C:\vasek\Eoe\cecko\data.txt
         scanf("%s",&cesta_souboru); 
         
@@ -131,26 +140,38 @@ int main(int argc, char * argv[])
                            {
                               
                                         //printf("%i",command[i]);
-                                        for (int i = 0; i < READ_DATA_LENGTH; i++)
+                                        for (i = 0; i < READ_DATA_LENGTH; i++)
                                             {command2[i] = (int)command[i];}
                                         
-                                        //zapis command do pameti                                            
-                                        loadDataToProgramMemory(hComm, command2);
-                                        beginProgramingInternal(hComm);
-                                        
-                                        //Kontrola zapisu dat
-                                        readDataFromProgramMemory(hComm, write_data, READ_DATA_LENGTH);
-                                        for (int i = 0; i < READ_DATA_LENGTH; i++)
-                                        	{
-                                                if(command[i]!=write_data[READ_DATA_LENGTH-i-1])
-                                                    {
-                                                        detekce_chyby=2;
-                                                        break;
-                                                    }
-                                                
+                                        if(cislo_instrukce==0)
+                                            {
+                                               for( i=0; i<COMMAND_LENGTH; i++)
+                                                 {
+                                                   configuration[i]=command[i];
+                                                 }
+                                                //printf("configurace");
                                             }
-                                         
-                                        printData(write_data);       
+                                        else
+                                            {
+                                                //zapis command do pameti                                            
+         //                                       loadDataToProgramMemory(hComm, command2);
+         //                                       beginProgramingInternal(hComm);
+                                                
+                                                //Kontrola zapisu dat
+                                                readDataFromProgramMemory(hComm, write_data, READ_DATA_LENGTH);
+                                                for (int i = 0; i < READ_DATA_LENGTH; i++)
+                                                	{
+                                                        if(command[i]!=write_data[READ_DATA_LENGTH-i-1])
+                                                            {
+        //                                                        detekce_chyby=2;
+        //                                                        break;
+                                                            }
+                                                        
+                                                    }
+                                                 
+                                                printData(write_data);       
+                                            }
+                                        cislo_instrukce=cislo_instrukce+1;
                                         incrementAddress(hComm, 1);
                                    
                            
@@ -168,6 +189,59 @@ int main(int argc, char * argv[])
           
         }
 
+    
+    
+    
+//Zapis hodnoty Oscal______________________________________________________________________    
+     printf("\nZapis hodnoty Oscal...\n");       
+     setZeros(hComm);
+     programVerifyMode(hComm);         
+     
+         for( i=0; i<COMMAND_LENGTH; i++)
+         {
+             oscal_write[i]=oscal[COMMAND_LENGTH-i-1];
+         }
+         
+         incrementAddress(hComm, 1023);
+         loadDataToProgramMemory(hComm, oscal_write);
+         beginProgramingInternal(hComm);
+         
+       
+         readDataFromProgramMemory(hComm, oscal, READ_DATA_LENGTH);
+    
+         printf("Hodnota Oscal: \n"); 
+         printData(oscal);
+         
+
+// Configurace______________________________________________________         
+         for( i=0; i<CONFIG_BITS; i++)
+         {
+              configuration[i]=configWord[COMMAND_LENGTH-i-1];
+         }
+        
+    	
+        loadConfigurationData(hComm, config);
+     	incrementAddress(hComm, 7);
+        loadDataToProgramMemory(hComm, configuration);
+        beginProgramingInternal(hComm);
+
+        
+        
+        readDataFromProgramMemory(hComm, configWord, READ_DATA_LENGTH);
+        for (int i = 0; i < READ_DATA_LENGTH; i++)
+       	{
+            if(configWord[i]!=configuration[READ_DATA_LENGTH-i-1])
+                {
+                   printf("Spatne zapsane konfiguracni slovo! \n");
+                   break;
+                }
+
+        }
+
+        printf("Hodnota Configurace: \n");
+        printData(configWord);
+        
+        
 //    loadDataToProgramMemory(hComm, command);
 //    beginProgramingInternal(hComm);
 

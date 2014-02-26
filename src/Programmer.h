@@ -7,7 +7,7 @@
 
 #define READ_DATA_LENGTH 14
 #define COMMAND_LENGTH 14
-
+#define CONFIG_BITS 5  //bity konfigurace, ktere se musi zachovat
 
 /**
 	I/O SETUP
@@ -33,6 +33,8 @@ void loadDataToProgramMemory(HANDLE hComm,int *command);
 void beginProgramingInternal(HANDLE hComm);
 
 void loadConfigurationData(HANDLE hComm,int *command);
+
+void bulkEraseProgramMemory(HANDLE hComm);
 
 /**
 	Enters Program/Verify mode

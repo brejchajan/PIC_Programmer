@@ -120,6 +120,19 @@ void loadConfigurationData(HANDLE hComm,int *command)
 }
 
 
+
+void bulkEraseProgramMemory(HANDLE hComm)
+{
+	int  bulkEraseProgramMemoryCommand[6] = {1, 0, 0, 1, 0, 0};
+	int velikost_pole;
+    velikost_pole=(sizeof(bulkEraseProgramMemoryCommand) / sizeof(int));
+	
+    setData(hComm, bulkEraseProgramMemoryCommand, velikost_pole);
+	Sleep(2);
+
+}
+
+
 void programVerifyMode(HANDLE hComm)
 {
 	EscapeCommFunction(hComm, SETDTR);

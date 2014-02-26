@@ -79,7 +79,7 @@ int readDataChunk(HANDLE hComm)
 	//Sleep(1);
 	setClock1(hComm);
 	//for (i=1 ; i<25 ; i++){}
-	Sleep(3);
+	Sleep(4);
     res = dataRead(hComm);
 	//Sleep(1);
 	setClock0(hComm);
