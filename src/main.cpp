@@ -154,8 +154,8 @@ int main(int argc, char * argv[])
                                         else
                                             {
                                                 //zapis command do pameti                                            
-         //                                       loadDataToProgramMemory(hComm, command2);
-         //                                       beginProgramingInternal(hComm);
+                                                loadDataToProgramMemory(hComm, command2);
+                                                beginProgramingInternal(hComm);
                                                 
                                                 //Kontrola zapisu dat
                                                 readDataFromProgramMemory(hComm, write_data, READ_DATA_LENGTH);
@@ -163,8 +163,8 @@ int main(int argc, char * argv[])
                                                 	{
                                                         if(command[i]!=write_data[READ_DATA_LENGTH-i-1])
                                                             {
-        //                                                        detekce_chyby=2;
-        //                                                        break;
+                                                                detekce_chyby=2;
+                                                                break;
                                                             }
                                                         
                                                     }
@@ -208,7 +208,18 @@ int main(int argc, char * argv[])
          
        
          readDataFromProgramMemory(hComm, oscal, READ_DATA_LENGTH);
-    
+         for (int i = 0; i < READ_DATA_LENGTH; i++)
+       	{
+            if(oscal[i]!=oscal_write[READ_DATA_LENGTH-i-1])
+                {
+                   printf("Spatne zapsane oscal! \n");
+                   break;
+                }
+
+        }
+         
+         
+         
          printf("Hodnota Oscal: \n"); 
          printData(oscal);
          
